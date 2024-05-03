@@ -1,15 +1,24 @@
-import { _decorator, Animation, Component, Enum, EventTarget, Game, game, instantiate, Node, randomRangeInt, Sprite, UI, Vec2, Vec3 } from 'cc';
+import { _decorator, Animation, Component, Enum, EventTarget, Game, game, instantiate, math, Node, PhysicsSystem2D, randomRangeInt, Sprite, UI, UITransform, Vec2, Vec3 } from 'cc';
 import { UiController } from './UiController';
 import PoolManager from './PoolManager';
 import ResourceManager from './ResourceManager';
+import { ENUM_AUDIO_CLIP, ENUM_GAME_EVENT, GameState } from './Enum';
+import { delay } from './Utilities';
+import { IManager } from './IManager';
+import BEConnector from './BEConnector';
+import { SoundManager } from './SoundManager';
 const { ccclass, property } = _decorator;
-
-export enum GameState {
-    MainMenu,
-    Playing,
-    EndGame
-}
-Enum(GameState);
+window.addEventListener('message', (data) => {
+    const { data: res } = data;
+    const objectRes = JSON.parse(res);
+    if (objectRes) {
+        const { type, value } = objectRes;
+        if (type === 'newTicket') {
+            GameManager.Instance.APIManager.numberTicket += value;
+            GameManager.Instance.ChangeState(GameState.Replay);
+        }
+    }
+});
 @ccclass('GameManager')
 export class GameManager extends Component {
     private static _instance: GameManager = null;
@@ -17,94 +26,131 @@ export class GameManager extends Component {
         return GameManager._instance;
     }
 
-    @property({ type: GameState })
+    @property({ type: Enum(GameState) , visible : false})
     public CurrentGameState: GameState = GameState.MainMenu;
 
-    @property([Node])
-    public SpawnBallPositions: Node[] = [];
-    
-    @property(UiController)
-    public UiController: UiController = null;
+    @property([Node]) public SpawnBallPositions: Node[] = [];
+    @property(UiController) public UiController: UiController = null;
+    @property(SoundManager) public audioManager: SoundManager = null;
+    @property(Node) private ballContainer: Node = null;
+    @property(Node) private basketSpace: Node = null;
+    @property(Node) private groundSpace: Node = null;
 
-    @property(Node)
-    public collisionSpace: Node = null;
+    private _score: number = 0;
+    public replayed: boolean = false;
 
-    public Score: number = 0;
-
-    public IsThrowable: boolean = false;
-
-    public EventHit = new EventTarget();
-    public EventScore = new EventTarget();
-    public EventGameEnd = new EventTarget();
+    // all managers
+    private _allManagers : IManager[] = [];
+    public APIManager: BEConnector;
+    public resouceManager : ResourceManager;
 
     ////////////////////////////////////////////
 
     protected onLoad(): void {
         GameManager._instance = this;
-        this.initializeAllManagers();
-        this.initializeGameEvent();
+        this._initializeGameEvent();
+        this.ChangeState(GameState.Loading)
     }
 
-    private initializeAllManagers() : void {
-        ResourceManager.instance.loadResource();
+
+    private _initializeAllManagers(): void {
+        this._allManagers = [];
+
+        this.APIManager = new BEConnector();
+        this.resouceManager = new ResourceManager();
+
+
+        this._allManagers.push(this.APIManager);
+        this._allManagers.push(this.resouceManager);
+        this._allManagers.push(this.audioManager);
+
+        this.APIManager.initialize();
+
+        this.resouceManager.initialize();
+        this.audioManager.initialize();
     }
 
-    private initializeGameEvent(){
-        game.on("spawn-ball",this.SpawnBall,this);
+    private _initializeGameEvent() {
+        game.on(ENUM_GAME_EVENT.SPAWN_NEW_BALL, this.SpawnBall, this);
+        game.on(ENUM_GAME_EVENT.START_GAME, this.StartGame, this);
+        game.on(ENUM_GAME_EVENT.UPDATE_SCORE, this.updateScore, this);
+    }
+    
+    public basketSpaceTrigger(isActive: boolean) {
+        this.basketSpace.active = isActive;
     }
 
-    protected start(): void {
-        this.EventScore.on("Score", this.PlayScoreAnimation, this);
+    public groundSpaceTrigger(isActive: boolean){
+        this.groundSpace.active = isActive;
     }
 
-    public async ChangeState(newState: GameState) {
+    public get score(){
+        return this._score;
+    }
+    
+    public ChangeState(newState: GameState) {
         if (this.CurrentGameState == newState) return;
 
-        this.CurrentGameState = newState;
+        this.CurrentGameState = newState;  
         switch (this.CurrentGameState) {
+            case GameState.Loading:
+                this._initializeAllManagers();
+                break;
             case GameState.MainMenu:
+                this.UiController.LoadingDone();
                 break;
             case GameState.Playing:
-                await GameManager.delay(1.5);
-                this.SpawnBall();
+                //this.APIManager.ticketMinus("auth");
+                this.UiController.StartGame();
+                break;
+            case GameState.Replay:
+                this.ballContainer.removeAllChildren();
+                this.APIManager.ticketMinus("revive");
+                this.UiController.StartGame();
                 break;
             case GameState.EndGame:
+                this.UiController.ShowEndGameUI();
+                this.audioManager.playSfx(ENUM_AUDIO_CLIP.SFX_ENDGAME);
                 break;
         }
     }
+
     public EndGame(): void {
         this.ChangeState(GameState.EndGame);
     }
 
+    private StartGame(): void {
+        this.ChangeState(GameState.Playing);
+    }
+
+
     private SpawnBall(): void {
-        setTimeout(() => {
-            this.collisionSpace.active = false;
-        }, 100);
-        PoolManager.instance.getNode("Ball",this.node.getChildByName("BallPool"),new Vec3(0,-1000));
+        
+        this.basketSpaceTrigger(false);
+        this.groundSpaceTrigger(false);
+
+        let randomPositionIndex = math.randomRangeInt(0,this.SpawnBallPositions.length);
+        let getRandomPosition = this.SpawnBallPositions[randomPositionIndex].getWorldPosition();
+
+        PoolManager.instance.getNode("Ball",this.ballContainer,getRandomPosition.clone());
     }
 
-    private async PlayScoreAnimation(winRate: number) {
-        // await GameManager.delay(0.25);
-        // if (winRate == 100) {
-        //     //this.animation?.play(this.animation.clips[0].name);
-        //     this.Score++;
-        // }
-        // else if (winRate == 50) {
-        //     //this.animation?.play(this.animation.clips[1].name);
-        // }
-        // else if (winRate == -50) {
-        //     //this.animation?.play(this.animation.clips[2].name);
-        // }
-
-        // this.UiController.UpdateScore();
-        // await GameManager.delay(this.Ball.MoveTime);
-        // this.SpawnBall();
-
-        // this.IsThrowable = true;
+    private updateScore() {
+        this._score += 10;
+        this.UiController.updateScore();
+        this.APIManager.score = this._score;
+        this.audioManager.playSfx(ENUM_AUDIO_CLIP.SFX_SCORE);
     }
 
-    public static delay(time: number): Promise<any> {
-        return new Promise((resolve) => setTimeout(resolve, time * 1000));
+    protected update(dt: number): void {
+        if(this.CurrentGameState === GameState.Loading){
+            let total = this._allManagers.reduce((acc, manager) =>{
+                return acc + manager.progress();
+            },0)
+            this.UiController.loadingUI.setProgressBar(total/this._allManagers.length);
+            if(this._allManagers.every(manager => manager.initializationCompleted()) && this.CurrentGameState === GameState.Loading){
+                this.ChangeState(GameState.MainMenu);
+            }
+        }
     }
-
 }

@@ -1,6 +1,7 @@
 import { instantiate, Node, NodePool, Prefab, Vec3 } from "cc"
+import { IManager } from "./IManager"
 
-export default class PoolManager{
+export default class PoolManager {
 
     private static _instance: any = null
 
@@ -44,7 +45,7 @@ export default class PoolManager{
         return node;
     }
 
-    public getNode(prefab: Prefab | string, parent?: Node, pos?: Vec3): Node {
+    public getNode(prefab: Prefab | string, parent?: Node, worldpos?: Vec3): Node {
         let tempPre: any;
         let name: any;
         if (typeof prefab === 'string') {
@@ -60,7 +61,7 @@ export default class PoolManager{
             name = prefab.data.name;
         }
 
-        let node = null;
+        let node: Node = null;
         if (this._dictPool.hasOwnProperty(name)) {
             let pool = this._dictPool[name];
             if (pool.size() > 0) {
@@ -78,7 +79,7 @@ export default class PoolManager{
         if (parent) {
             node.parent = parent;
             node.active = true;
-            if (pos) node.position = pos;
+            if (worldpos) node.worldPosition = worldpos;
         }
         return node;
     }

@@ -1,39 +1,76 @@
-import { Prefab } from 'cc';
+import { assetManager, AudioClip, director, game, MainFlow, Prefab } from 'cc';
 import PoolManager from './PoolManager';
 import { resources } from 'cc';
+import { IManager } from './IManager';
+import { SCENE_TO_RESOURCES_MAPPING } from './Enum';
 
-export default class ResourceManager {
+export default class ResourceManager implements IManager {
+    private static readonly PREFAB_PATH: string = "Prefab";
 
-    private static _instance: any = null
-
-    private static readonly FRAGMENT_PREFAB_PATH : string = "Prefab";
-
-    static getInstance<T>(): T {
-        if (this._instance === null) {
-            this._instance = new this()
-        }
-
-        return this._instance
+    initialize() {
+        this.loadResource();
+    }
+    progress(): number {
+        let arr: number[] = [
+            this._prefabDataProgress
+        ];
+        return arr.reduce((t, curr) => t + curr, 0) / arr.length;
     }
 
-    static get instance() {
-        return this.getInstance<ResourceManager>()
+    initializationCompleted(): boolean {
+        let arr: boolean[] = [
+            this._prefabDataDone
+        ];
+        return arr.every(x => x);
     }
 
 
-    public async loadResource(){
+    
+
+    private _prefabDataProgress: number;
+    private _prefabDataDone: boolean;
+    
+    public loadResource() {
         //load prefab
-        const loadPrefab = new Promise<void>((resolve,reject)=>{
-            resources.loadDir(ResourceManager.FRAGMENT_PREFAB_PATH, Prefab, (err, assets)=>{
-                if(err) reject && reject()
-                let asset: any
-                for (let i = 0; i < assets.length; i++) {
-                    asset = assets[i];
-                    PoolManager.instance.setPrefab(asset.data.name, asset)
+        this._prefabDataProgress = 0;
+        this._prefabDataDone = false;
+        assetManager.loadBundle(SCENE_TO_RESOURCES_MAPPING[director.getScene().name], (error, bundle) => {
+            bundle.loadDir(ResourceManager.PREFAB_PATH, Prefab,
+                (finish, total, item) => {
+                    this._prefabDataProgress = finish / total;
                 }
-                resolve && resolve()
-            })
+                ,
+                (err, assets) => {
+                    if (err) console.error(err);
+                    let asset: any
+                    for (let i = 0; i < assets.length; i++) {
+                        asset = assets[i];
+                        console.log(asset.data.name);
+                        
+                        PoolManager.instance.setPrefab(asset.data.name, asset)
+                    }
+                    this._prefabDataProgress = 1;
+                    this._prefabDataDone = true;
+                }
+            )
         })
+
+        // resources.loadDir(ResourceManager.PREFAB_PATH, Prefab,
+        //     (finish, total, item) => {
+        //         this._prefabDataProgress = finish / total;
+        //     }
+        //     ,
+        //     (err, assets) => {
+        //         if (err) console.error(err);
+        //         let asset: any
+        //         for (let i = 0; i < assets.length; i++) {
+        //             asset = assets[i];
+        //             PoolManager.instance.setPrefab(asset.data.name, asset)
+        //         }
+        //         this._prefabDataProgress = 1;
+        //         this._prefabDataDone = true;
+        //     })
+
     }
 
 }

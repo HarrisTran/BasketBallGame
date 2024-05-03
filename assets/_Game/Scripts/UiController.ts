@@ -1,77 +1,73 @@
-import { _decorator, CCFloat, Node, Component, Label } from 'cc';
-import { GameManager, GameState } from './GameManager';
+import { _decorator, CCFloat, Node, Component, Label, game, Animation } from 'cc';
+import { GameManager} from './GameManager';
+import { FormatTime } from './Utilities';
+import { ENUM_GAME_EVENT, GameState } from './Enum';
+import { GameplayPanel } from './Panel/GameplayPanel';
+import { MainMenuPanel } from './Panel/MainMenuPanel';
+import { GameOverPanel } from './Panel/GameOverPanel';
+import { LoadingPanel } from './Panel/LoadingPanel';
 const { ccclass, property } = _decorator;
 
 @ccclass('UiController')
 export class UiController extends Component {
+    @property({group : {name : "UI", displayOrder: 2}, type: LoadingPanel})
+    public loadingUI: LoadingPanel = null;
    
-    @property({ group: { name: 'Labels', displayOrder: 1 }, type: Label, visible: true })
-    private _timeTxt: Label = null;
-    @property({ group: { name: 'Labels', displayOrder: 1 }, type: Label, visible: true })
-    private _scoreTxt: Label = null;
-    @property({ group: { name: 'Labels', displayOrder: 1 }, type: Label, visible: true })
-    private _endGameScoreTxt: Label = null;
-   
-    
-    @property(Node)
-    private _startGameUI: Node = null;
-    @property(Node)
-    private _gameplayUI: Node = null;
-    @property(Node)
-    private _endGameUI: Node = null;
+    @property({group : {name : "UI", displayOrder: 2}, type: MainMenuPanel})
+    public startGameUI: MainMenuPanel = null;
 
-    private _currentTime: number = 0;
+    @property({group : {name : "UI", displayOrder: 2}, type: GameplayPanel})
+    public gameplayUI: GameplayPanel = null;
+
+    @property({group : {name : "UI", displayOrder: 2}, type: GameOverPanel})
+    public endGameUI: GameOverPanel = null;
+
+    onLoad(){
+    }
 
     protected start(): void {
-        this._currentTime = 60;
-        // GameManager.Instance.EventScore.on("Score", this.UpdateScore, this);
+        this.loadingUI.node.active = true;
+        this.startGameUI.node.active = false;
+        this.gameplayUI.node.active = false;
+        this.endGameUI.node.active = false;
     }
-    protected update(dt: number): void {
-        if (GameManager.Instance.CurrentGameState != GameState.Playing) return;
 
-        this._currentTime -= dt;
-        this._timeTxt.string = this.FormatTime(this._currentTime);
+    // protected update(dt: number): void {
+    //     if (GameManager.Instance.CurrentGameState != GameState.Playing) return;
 
-        if (this._currentTime <= 0) {
-            this._timeTxt.string = "00:00";
-            GameManager.Instance.EndGame();
-            this.ShowEndGameUI();
-        }
+    //     this._currentTime -= dt;
+    //     this.timeTxt.string = FormatTime(this._currentTime);
+
+    //     if (this._currentTime <= 0) {
+    //         this.timeTxt.string = FormatTime(0);
+    //         this.ShowEndGameUI();
+    //     }
+    // }
+    public LoadingDone(){
+        this.loadingUI.node.active = false;
+        this.startGameUI.node.active = true;
+        this.gameplayUI.node.active = false;
+        this.endGameUI.node.active = false;
+
     }
 
     public StartGame(): void {
-        this._startGameUI.active = false;
-        this._gameplayUI.active = true;
-        GameManager.Instance.ChangeState(GameState.Playing);
+        this.loadingUI.node.active = false;
+        this.startGameUI.node.active = false;
+        this.gameplayUI.node.active = true;
+        this.endGameUI.node.active = false;
+    }
+
+    public updateScore(){
+        this.gameplayUI.updateScore();
     }
     
 
-    public UpdateScore(): void {
-        this._scoreTxt.string = GameManager.Instance.Score.toString();
-    }
-
-    private FormatTime(time: number): string {
-        var minute = 0;
-        var second = 0;
-        var minuteString = "";
-        var secondString = "";
-
-        minute = time / 60;
-        second = time % 60;
-
-        if (minute < 10)
-            minuteString = "0" + Math.floor(minute).toFixed();
-        else minuteString = Math.floor(minute).toFixed();
-
-        if (second < 10)
-            secondString = "0" + Math.floor(second).toFixed();
-        else secondString = Math.floor(second).toFixed();
-
-        return minuteString + ":" + secondString;
-    }
-    private ShowEndGameUI(): void {
-        this._gameplayUI.active = false;
-        this._endGameUI.active = true;
-        this._endGameScoreTxt.string = "Your score: " + GameManager.Instance.Score.toString();
+    public ShowEndGameUI(): void {
+        this.loadingUI.node.active = false;
+        this.startGameUI.node.active = false;
+        this.gameplayUI.node.active = false;
+        this.endGameUI.node.active = true;
+        //this.endGameScoreTxt.string = "Your score: " + GameManager.Instance.score.toString();
     }
 }

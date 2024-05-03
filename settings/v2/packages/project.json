@@ -10,5 +10,13 @@
   "custom_joint_texture_layouts": [],
   "script": {
     "preserveSymlinks": true
+  },
+  "physics": {
+    "collisionGroups": [],
+    "collisionMatrix": {
+      "0": 3,
+      "1": 1
+    },
+    "fixedTimeStep": 0.016667
   }
 }
