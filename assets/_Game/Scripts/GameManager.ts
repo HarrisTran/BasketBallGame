@@ -1,12 +1,13 @@
-import { _decorator, Animation, Component, Enum, EventTarget, Game, game, instantiate, math, Node, PhysicsSystem2D, randomRangeInt, Sprite, UI, UITransform, Vec2, Vec3 } from 'cc';
+import { _decorator, Animation, Component, Enum, EventTarget, Game, game, instantiate, math, Node, ParticleSystem, PhysicsSystem2D, randomRangeInt, Sprite, UI, UITransform, Vec2, Vec3 } from 'cc';
 import { UiController } from './UiController';
 import PoolManager from './PoolManager';
 import ResourceManager from './ResourceManager';
 import { ENUM_AUDIO_CLIP, ENUM_GAME_EVENT, GameState } from './Enum';
-import { delay } from './Utilities';
+import { delay, playParticleRecursively } from './Utilities';
 import { IManager } from './IManager';
 import BEConnector from './BEConnector';
 import { SoundManager } from './SoundManager';
+import { Tutorial } from './Tutorial';
 const { ccclass, property } = _decorator;
 window.addEventListener('message', (data) => {
     const { data: res } = data;
@@ -35,6 +36,9 @@ export class GameManager extends Component {
     @property(Node) private ballContainer: Node = null;
     @property(Node) private basketSpace: Node = null;
     @property(Node) private groundSpace: Node = null;
+    @property(Tutorial) tutorial: Tutorial = null;
+    @property(ParticleSystem) ballPassParticle: ParticleSystem = null;
+    @property(ParticleSystem) ballHitParticle: ParticleSystem = null;
 
     private _score: number = 0;
     public replayed: boolean = false;
@@ -45,6 +49,7 @@ export class GameManager extends Component {
     public resouceManager : ResourceManager;
 
     ////////////////////////////////////////////
+    private _ballSpawnPosition: Vec3;
 
     protected onLoad(): void {
         GameManager._instance = this;
@@ -72,8 +77,10 @@ export class GameManager extends Component {
 
     private _initializeGameEvent() {
         game.on(ENUM_GAME_EVENT.SPAWN_NEW_BALL, this.SpawnBall, this);
+        game.on(ENUM_GAME_EVENT.THROW_BALL,this.throwBall,this);
         game.on(ENUM_GAME_EVENT.START_GAME, this.StartGame, this);
         game.on(ENUM_GAME_EVENT.UPDATE_SCORE, this.updateScore, this);
+        game.on(ENUM_GAME_EVENT.SHOW_TUTORIAL, this.showTutorial, this);
     }
     
     public basketSpaceTrigger(isActive: boolean) {
@@ -100,7 +107,7 @@ export class GameManager extends Component {
                 this.UiController.LoadingDone();
                 break;
             case GameState.Playing:
-                //this.APIManager.ticketMinus("auth");
+                this.APIManager.ticketMinus("auth");
                 this.UiController.StartGame();
                 break;
             case GameState.Replay:
@@ -130,16 +137,34 @@ export class GameManager extends Component {
         this.groundSpaceTrigger(false);
 
         let randomPositionIndex = math.randomRangeInt(0,this.SpawnBallPositions.length);
-        let getRandomPosition = this.SpawnBallPositions[randomPositionIndex].getWorldPosition();
+        let getRandomPosition : Vec3 = this.SpawnBallPositions[randomPositionIndex].getWorldPosition();
+        this._ballSpawnPosition = getRandomPosition.clone();
 
         PoolManager.instance.getNode("Ball",this.ballContainer,getRandomPosition.clone());
     }
 
     private updateScore() {
-        this._score += 10;
-        this.UiController.updateScore();
-        this.APIManager.score = this._score;
-        this.audioManager.playSfx(ENUM_AUDIO_CLIP.SFX_SCORE);
+        if(this.CurrentGameState == GameState.Playing || this.CurrentGameState === GameState.Replay){
+            this._score += 10;
+            this.UiController.updateScore();
+            this.APIManager.score = this._score;
+
+            playParticleRecursively(this.ballPassParticle);
+
+            this.audioManager.playSfx(ENUM_AUDIO_CLIP.SFX_SCORE);
+        }
+    }
+
+    private showTutorial(){
+        this.tutorial.playTutorial();
+    }
+
+    private throwBall(){
+        this.ballHitParticle.node.setWorldPosition(new Vec3(this._ballSpawnPosition.x,this._ballSpawnPosition.y-100));
+        playParticleRecursively(this.ballHitParticle);
+        if(this.node.getChildByName("Tutorial")){
+            this.node.getChildByName("Tutorial").removeFromParent();
+        }
     }
 
     protected update(dt: number): void {

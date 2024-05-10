@@ -13,8 +13,10 @@ export const SCENE_TO_RESOURCES_MAPPING: {[key: string]: string} = {
 
 export enum ENUM_GAME_EVENT {
     SPAWN_NEW_BALL = "spawn-new-ball",
+    THROW_BALL = "throw-ball",
     START_GAME = "start-game",
     UPDATE_SCORE = 'update-score',
+    SHOW_TUTORIAL = 'show-tutorial',
 }
 
 export enum ENUM_AUDIO_CLIP {

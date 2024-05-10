@@ -1,6 +1,6 @@
-import { _decorator, BoxCollider2D, clamp, Collider2D, Component, Contact2DType, ERigidBody2DType, EventTouch, game, geometry, Input, IPhysics2DContact, math, Node, NodeEventType, RealCurve, RigidBody2D, tween, UITransform, v3, Vec2, Vec3 } from 'cc';
+import { _decorator, Animation, BoxCollider2D, clamp, Collider2D, Component, Contact2DType, ERigidBody2DType, EventTouch, game, geometry, Input, IPhysics2DContact, math, Node, NodeEventType, ParticleSystem, RealCurve, RigidBody2D, SortingLayers, tween, UITransform, v3, Vec2, Vec3 } from 'cc';
 import { GameManager } from './GameManager';
-import { ENUM_COLLIDER_TAG, ENUM_GAME_EVENT } from './Enum';
+import { ENUM_AUDIO_CLIP, ENUM_COLLIDER_TAG, ENUM_GAME_EVENT } from './Enum';
 import { delay } from './Utilities';
 const { ccclass, property } = _decorator;
 
@@ -12,11 +12,10 @@ export enum BallStatus {
 
 @ccclass('Ball')
 export class Ball extends Component {
-    @property({type: RealCurve, visible: true})
-    curveScale: RealCurve = new RealCurve();
+    @property({type: RealCurve, visible: true}) private curveScale: RealCurve = new RealCurve();
+    @property(RigidBody2D) private rigidBall : RigidBody2D = null;
+    @property(Animation) private glowAnimation: Animation = null;
 
-    @property(RigidBody2D)
-    private rigidBall : RigidBody2D = null;
 
     private _touchStartPos : Vec2;
     private _touchEndPos : Vec2;
@@ -41,6 +40,7 @@ export class Ball extends Component {
     private onEndContact(self: Collider2D, other: Collider2D,contact: IPhysics2DContact){
         if(other.tag === ENUM_COLLIDER_TAG.BASKET_TRIGGER){
             setTimeout(() => {
+                GameManager.Instance.audioManager.playSfx(ENUM_AUDIO_CLIP.SFX_HIT);
                 GameManager.Instance.basketSpaceTrigger(true)
             }, 10);
         }
@@ -53,6 +53,7 @@ export class Ball extends Component {
 
     private onBeginContact(self: Collider2D, other: Collider2D,contact: IPhysics2DContact){
         if(other.tag === ENUM_COLLIDER_TAG.GROUND){
+            GameManager.Instance.audioManager.playSfx(ENUM_AUDIO_CLIP.SFX_BOUNCE);
             setTimeout(() => {
                 this._destroyable = true;
             }, 500);
@@ -75,22 +76,20 @@ export class Ball extends Component {
         let direction = this._touchEndPos.subtract(this._touchStartPos);
         
         if(direction.length() > 50 && this._touchStartPos.y < this._touchEndPos.y){
+           this.glowAnimation.node.active = false;
             this._threw = true;
             let linearImpulse = direction.multiplyScalar(2000);
             let angularImpulse = (Math.random() < 0.5 ? 1 : -1)*1440;
             
+            game.emit(ENUM_GAME_EVENT.THROW_BALL,this);
+
             this.rigidBall.gravityScale = 11;
             this.rigidBall.applyForceToCenter(linearImpulse,true);
             this.rigidBall.applyAngularImpulse(angularImpulse,true);
-            
-            // tween(this.node)
-            // .to(0.9,{scale: new Vec3(0.7,0.7)},{easing: k => this.curveScale.evaluate(k)})
-            // .start();
 
             tween(this.node)
-            .to(0.6,{scale: new Vec3(0.7,0.7)},{easing: "sineIn"})
+            .to(0.6,{scale: new Vec3(0.7,0.7)},{easing: k=>this.curveScale.evaluate(k)})
             .start();
-            
         }
     }
 

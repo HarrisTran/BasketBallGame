@@ -108,8 +108,8 @@ export default class BEConnector implements IManager{
                 }
             })
             .then((data) => {
-                
                 if (data.ResultCode == 1) this.key = data.Data.Key;
+                console.log("Authenticate succeeded");
             })
             .catch(err=>{
                 console.log("Authenticate failed");
@@ -193,9 +193,11 @@ export default class BEConnector implements IManager{
                 body: JSON.stringify({ data: dataEncrypted }),
             },
         ).catch((err) => console.log(err));
+
+        this.postScoreWebEvent();
     }
 
-    public postScoreWebEvent(){
+    private postScoreWebEvent(){
         window.parent.postMessage(
             JSON.stringify({
                 error: false,

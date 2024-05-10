@@ -33,13 +33,14 @@ export class GameOverPanel extends Component {
     }
 
     private exitGame(){
-        GameManager.Instance.APIManager.postScoreWebEvent();
+        //GameManager.Instance.APIManager.postScoreWebEvent();
+        GameManager.Instance.APIManager.postScoreToServer();
     }
 
     protected onEnable(): void {
         const numTicket = GameManager.Instance.APIManager.getTicketCanBeMinus();
         this.ticketMinus.string = '-' + numTicket.toString();
-        GameManager.Instance.APIManager.postScoreToServer();
+        
         this.scheduleOnce(this.exitGame,60);
         this._updateLeaderBoard();
         

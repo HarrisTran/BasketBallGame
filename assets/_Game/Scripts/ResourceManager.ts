@@ -45,8 +45,6 @@ export default class ResourceManager implements IManager {
                     let asset: any
                     for (let i = 0; i < assets.length; i++) {
                         asset = assets[i];
-                        console.log(asset.data.name);
-                        
                         PoolManager.instance.setPrefab(asset.data.name, asset)
                     }
                     this._prefabDataProgress = 1;

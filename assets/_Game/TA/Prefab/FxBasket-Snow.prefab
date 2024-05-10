@@ -193,7 +193,7 @@
     "duration": 2,
     "loop": false,
     "simulationSpeed": 1,
-    "playOnAwake": false,
+    "playOnAwake": true,
     "gravityModifier": {
       "__id__": 15
     },
@@ -1006,7 +1006,7 @@
     "duration": 2,
     "loop": false,
     "simulationSpeed": 1,
-    "playOnAwake": false,
+    "playOnAwake": true,
     "gravityModifier": {
       "__id__": 81
     },
@@ -1819,7 +1819,7 @@
     "duration": 2,
     "loop": false,
     "simulationSpeed": 1,
-    "playOnAwake": false,
+    "playOnAwake": true,
     "gravityModifier": {
       "__id__": 147
     },
@@ -2679,7 +2679,7 @@
     "duration": 1,
     "loop": false,
     "simulationSpeed": 1,
-    "playOnAwake": false,
+    "playOnAwake": true,
     "gravityModifier": {
       "__id__": 214
     },
@@ -3494,7 +3494,7 @@
     "duration": 1,
     "loop": false,
     "simulationSpeed": 1,
-    "playOnAwake": false,
+    "playOnAwake": true,
     "gravityModifier": {
       "__id__": 281
     },
@@ -4214,7 +4214,7 @@
     "duration": 5,
     "loop": false,
     "simulationSpeed": 1,
-    "playOnAwake": false,
+    "playOnAwake": true,
     "gravityModifier": {
       "__id__": 345
     },
@@ -4836,6 +4836,6 @@
       "__id__": 0
     },
     "fileId": "ffNiF5n2VA3Kik96MX8zRz",
-    "targetOverrides": null
+    "targetOverrides": []
   }
 ]

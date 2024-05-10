@@ -1,4 +1,4 @@
-import { _decorator, assetManager, AudioClip, AudioSource, Component, director, Node, resources } from 'cc';
+import { _decorator, assetManager, AudioClip, AudioSource, Component, director, Node, resources, Sprite, SpriteFrame } from 'cc';
 import { IManager } from './IManager';
 import { ENUM_AUDIO_CLIP, SCENE_TO_RESOURCES_MAPPING } from './Enum';
 const { ccclass, property } = _decorator;
@@ -13,6 +13,15 @@ export class SoundManager extends Component implements IManager {
 
     @property(AudioSource)
     private musicSource: AudioSource = null;
+    
+    @property(Sprite)
+    soundSymbol: Sprite = null;
+
+    @property(SpriteFrame)
+    soundOn: SpriteFrame = null;
+
+    @property(SpriteFrame)
+    soundOff: SpriteFrame = null;
 
 
     private _audioClipSet: { [key: string]: AudioClip } = {};
@@ -63,6 +72,7 @@ export class SoundManager extends Component implements IManager {
 
     public toggleMute(): boolean {
         this._isMute = !this._isMute;
+        this.soundSymbol.spriteFrame = this._isMute ? this.soundOff : this.soundOn;
         this.setMute(this._isMute);
         return this._isMute;
     }
@@ -84,6 +94,7 @@ export class SoundManager extends Component implements IManager {
     }
 
     public playSfx(audioClipName: ENUM_AUDIO_CLIP, volume = 1, loop = false) {
+        if(this._isMute) return;
         this.soundSource.clip = this._audioClipSet[audioClipName];
         this.soundSource.volume = volume;
         this.soundSource.loop = loop;

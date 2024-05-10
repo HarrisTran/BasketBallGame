@@ -1,4 +1,4 @@
-import { _decorator, Animation, Component, game, Label, Node, Toggle } from 'cc';
+import { _decorator, Animation, Component, game, Label, Node, Sprite, SpriteFrame, Toggle } from 'cc';
 import { GameManager } from '../GameManager';
 import { ENUM_AUDIO_CLIP, ENUM_GAME_EVENT, GameState } from '../Enum';
 import { delay, FormatTime } from '../Utilities';
@@ -21,6 +21,8 @@ export class GameplayPanel extends Component {
     @property(Label)
     private countDownTimer: Label = null;
 
+    
+
     private _currentTime: number;
     private _isReady: boolean;
 
@@ -30,26 +32,33 @@ export class GameplayPanel extends Component {
     }
 
     protected async onEnable() {
+        this.timeTxt.node.getComponent(Animation).stop();
         this._currentTime = 60;
         this._isReady = false;
         this.countDownTimer.node.active = true;
         this.countDownTimer.string = '3'
+        
         await delay(1);
         this.countDownTimer.string = '2'
+        
         await delay(1);
         this.countDownTimer.string = '1'
+        
         await delay(1);
         this._whenTimerCompleted();
+        
+        await delay(this._currentTime - 4);
+        this.timeTxt.node.getComponent(Animation).play();
+        GameManager.Instance.audioManager.playSfx(ENUM_AUDIO_CLIP.SFX_TIMEUP);
+
     }
 
     private _whenTimerCompleted() {
         this._isReady = true;
         this.countDownTimer.node.active = false;
-        game.emit(ENUM_GAME_EVENT.SPAWN_NEW_BALL);
+        game.emit(ENUM_GAME_EVENT.SPAWN_NEW_BALL); 
+        game.emit(ENUM_GAME_EVENT.SHOW_TUTORIAL);
         GameManager.Instance.audioManager.playSfx(ENUM_AUDIO_CLIP.SFX_START);
-        this.scheduleOnce(() => {
-            GameManager.Instance.audioManager.playSfx(ENUM_AUDIO_CLIP.SFX_TIMEUP);
-        }, this._currentTime - 4)
     }
 
     private _onCheckAudio() {

@@ -534,6 +534,9 @@
     "rigidBall": {
       "__id__": 22
     },
+    "glowAnimation": {
+      "__id__": 7
+    },
     "_id": ""
   },
   {
@@ -544,7 +547,7 @@
     "__type__": "cc.RealCurve",
     "_times": [
       0,
-      0.5780487804878048,
+      0.748780487804878,
       1
     ],
     "_values": [
@@ -554,7 +557,7 @@
         "tangentWeightMode": 0,
         "value": 0,
         "rightTangent": 0,
-        "rightTangentWeight": 0.26260162601626014,
+        "rightTangentWeight": 0.19268292682926827,
         "leftTangent": 0,
         "leftTangentWeight": 1,
         "easingMethod": 0,
@@ -564,11 +567,11 @@
         "__type__": "cc.RealKeyframeValue",
         "interpolationMode": 2,
         "tangentWeightMode": 0,
-        "value": 0.08333333333333333,
+        "value": 0.12121212121212122,
         "rightTangent": 0.6501057082452432,
-        "rightTangentWeight": 0.16775988024635208,
+        "rightTangentWeight": 0.09988015991545818,
         "leftTangent": 0.6501057082452432,
-        "leftTangentWeight": 0.2298213388345979,
+        "leftTangentWeight": 0.29770105916549183,
         "easingMethod": 0,
         "__editorExtras__": null
       },
@@ -577,10 +580,10 @@
         "interpolationMode": 2,
         "tangentWeightMode": 0,
         "value": 1,
-        "rightTangent": 7.592592592592586,
+        "rightTangent": 5.298573975044559,
         "rightTangentWeight": 1,
-        "leftTangent": 7.592592592592586,
-        "leftTangentWeight": 0.5416749519495131,
+        "leftTangent": 5.298573975044559,
+        "leftTangentWeight": 0.561130492930696,
         "easingMethod": 0,
         "__editorExtras__": null
       }
@@ -598,6 +601,30 @@
     },
     "fileId": "1c4Mkfw65DHqwTBydnJI+q",
     "instance": null,
-    "targetOverrides": []
+    "targetOverrides": [
+      {
+        "__id__": 28
+      }
+    ]
+  },
+  {
+    "__type__": "cc.TargetOverrideInfo",
+    "source": {
+      "__id__": 24
+    },
+    "sourceInfo": null,
+    "propertyPath": [
+      "softBodySlamParticle"
+    ],
+    "target": null,
+    "targetInfo": {
+      "__id__": 29
+    }
+  },
+  {
+    "__type__": "cc.TargetInfo",
+    "localID": [
+      "f7pjqav9xAuKequosEoLnf"
+    ]
   }
 ]

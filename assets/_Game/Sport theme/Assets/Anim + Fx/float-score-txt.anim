@@ -11,7 +11,7 @@
     "speed": 1,
     "wrapMode": 1,
     "enableTrsBlending": false,
-    "_duration": 0.6666666666666666,
+    "_duration": 1.1666666666666667,
     "_hash": 500763545,
     "_tracks": [
       {
@@ -67,8 +67,8 @@
     "__type__": "cc.RealCurve",
     "_times": [
       0,
-      0.48333333333333334,
-      0.6666666666666666
+      0.4833333194255829,
+      1.1666666269302368
     ],
     "_values": [
       {
@@ -88,8 +88,8 @@
         "interpolationMode": 2,
         "tangentWeightMode": 3,
         "value": 3,
-        "rightTangent": -3.000000000000005,
-        "rightTangentWeight": 0.12649110640673528,
+        "rightTangent": -3,
+        "rightTangentWeight": 0.12649109959602356,
         "leftTangent": 0.28877004981040955,
         "leftTangentWeight": 0.16220058500766754,
         "easingMethod": 0,
@@ -102,8 +102,8 @@
         "value": 0,
         "rightTangent": 0,
         "rightTangentWeight": 1,
-        "leftTangent": -1507.500000000032,
-        "leftTangentWeight": 2.0100004422332685,
+        "leftTangent": -1507.5,
+        "leftTangentWeight": 2.010000467300415,
         "easingMethod": 0,
         "__editorExtras__": null
       }
@@ -121,8 +121,8 @@
     "__type__": "cc.RealCurve",
     "_times": [
       0,
-      0.48333333333333334,
-      0.6666666666666666
+      0.4833333194255829,
+      1.1666666269302368
     ],
     "_values": [
       {
@@ -142,8 +142,8 @@
         "interpolationMode": 2,
         "tangentWeightMode": 3,
         "value": 3,
-        "rightTangent": -3.000000000000005,
-        "rightTangentWeight": 0.12649110640673528,
+        "rightTangent": -3,
+        "rightTangentWeight": 0.12649109959602356,
         "leftTangent": 0.28877004981040955,
         "leftTangentWeight": 0.16220058500766754,
         "easingMethod": 0,
@@ -156,8 +156,8 @@
         "value": 0,
         "rightTangent": 0,
         "rightTangentWeight": 1,
-        "leftTangent": -1507.500000000032,
-        "leftTangentWeight": 2.0100004422332685,
+        "leftTangent": -1507.5,
+        "leftTangentWeight": 2.010000467300415,
         "easingMethod": 0,
         "__editorExtras__": null
       }
@@ -175,8 +175,8 @@
     "__type__": "cc.RealCurve",
     "_times": [
       0,
-      0.48333333333333334,
-      0.6666666666666666
+      0.4833333194255829,
+      1.1666666269302368
     ],
     "_values": [
       {

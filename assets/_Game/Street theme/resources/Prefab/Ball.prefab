@@ -534,6 +534,9 @@
     "rigidBall": {
       "__id__": 22
     },
+    "glowAnimation": {
+      "__id__": 7
+    },
     "_id": ""
   },
   {
