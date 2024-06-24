@@ -868,6 +868,10 @@
       "__uuid__": "3798492d-55f0-44b6-9ca2-a385715563c9@f9941",
       "__expectedType__": "cc.SpriteFrame"
     },
+    "yellowFrame": {
+      "__uuid__": "dc5a9bf8-5cc4-4edb-9a6e-e71545745a47@f9941",
+      "__expectedType__": "cc.SpriteFrame"
+    },
     "_id": ""
   },
   {
@@ -883,6 +887,7 @@
       "__id__": 0
     },
     "fileId": "32U8jvSfpCO4ctXJn/jbvi",
+    "instance": null,
     "targetOverrides": null
   }
 ]

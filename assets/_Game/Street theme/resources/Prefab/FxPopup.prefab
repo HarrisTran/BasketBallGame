@@ -261,7 +261,7 @@
   {
     "__type__": "cc.CurveRange",
     "mode": 0,
-    "constant": 4,
+    "constant": 5,
     "multiplier": 1
   },
   {
@@ -2377,6 +2377,7 @@
       "__id__": 0
     },
     "fileId": "8fpszNyxNCGK7G/5keq8rE",
+    "instance": null,
     "targetOverrides": null
   }
 ]

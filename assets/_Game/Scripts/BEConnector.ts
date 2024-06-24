@@ -21,7 +21,6 @@ export default class BEConnector implements IManager{
 
     private _gameScore: number = 0;
 
-    public allScoreInfo: ParticipantInfo[] = [];
 
     private gameURL: string = '';
 
@@ -43,10 +42,7 @@ export default class BEConnector implements IManager{
         this._initialized = false;
         try {
             await this.authenticate();
-            this._loadingProgress += 0.5;
-
-            await this.getAllScore();
-            this._loadingProgress += 0.5;
+            this._loadingProgress += 1;
 
             this._initialized = true;
 
@@ -77,24 +73,6 @@ export default class BEConnector implements IManager{
         this.gameURL = ENV_CONFIG[url.get('env')];
     }
 
-
-    public async getAllScore() {
-        // await fetch(
-        //     `${this.gameURL}/promotions/detail/${this.tournamentId}`
-        // ).then(response=>{
-        //     return response.json();
-        // })
-        // .then((json)=>{
-        //     this.allScoreInfo = json.tScores;
-        // })
-        await delay(1);
-        this.allScoreInfo = [
-            {id: "1", totalScore: 2000},{id: "2", totalScore: 1000},
-            {id: "3", totalScore: 900},{id: "4", totalScore: 700},
-            {id: "5", totalScore: 600},{id: "6", totalScore: 200},
-        ]
-        
-    }
 
     public async authenticate() {
         
@@ -178,26 +156,37 @@ export default class BEConnector implements IManager{
         );
     }
 
-    public postScoreToServer() {
-        let dataEncrypted : string = this._getDataEncrypted({Score: this._gameScore,TournamentId: this.tournamentId, SkinId: this.skinId});
-    
-        fetch(
-            `${this.gameURL}/promotions/store-score-tournament?tournamentId=${this.tournamentId}&skinId=${this.skinId}&cocos=1`,
-            {
-                headers: {
-                    Accept: 'application/json',
-                    'Content-Type': 'application/json',
-                    'x-access-refactor-token': this.token,
-                },
-                method: 'POST',
-                body: JSON.stringify({ data: dataEncrypted }),
-            },
-        ).catch((err) => console.log(err));
+    public async postScoreToServer() {
+        let dataEncrypted: string = this._getDataEncrypted({ Score: this._gameScore, TournamentId: this.tournamentId, SkinId: this.skinId });
 
-        this.postScoreWebEvent();
+        try {
+            console.log(this._gameScore);
+            console.log(this.currentScore);
+            
+            
+            let leaderBoard = await fetch(
+                `${this.gameURL}/promotions/store-score-tournament?tournamentId=${this.tournamentId}&skinId=${this.skinId}&cocos=1`,
+                {
+                    headers: {
+                        Accept: 'application/json',
+                        'Content-Type': 'application/json',
+                        'x-access-refactor-token': this.token,
+                    },
+                    method: 'POST',
+                    body: JSON.stringify({ data: dataEncrypted }),
+                },
+            )
+            return leaderBoard.json() as Promise<ParticipantInfo[]>;
+        } catch (error) {
+            throw error;
+        }
     }
 
-    private postScoreWebEvent(){
+    public getStagingScore(){
+        return this._gameScore + this.currentScore;
+    }
+
+    public postScoreWebEvent(){
         window.parent.postMessage(
             JSON.stringify({
                 error: false,
@@ -240,5 +229,5 @@ const ENV_CONFIG = {
 
 export interface ParticipantInfo {
     id: string,
-    totalScore: number
+    sum: number
 }

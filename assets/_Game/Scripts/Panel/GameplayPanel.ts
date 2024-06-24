@@ -1,4 +1,4 @@
-import { _decorator, Animation, Component, game, Label, Node, Sprite, SpriteFrame, Toggle } from 'cc';
+import { _decorator, Animation, Color, Component, game, Label, Node, Sprite, SpriteFrame, Toggle } from 'cc';
 import { GameManager } from '../GameManager';
 import { ENUM_AUDIO_CLIP, ENUM_GAME_EVENT, GameState } from '../Enum';
 import { delay, FormatTime } from '../Utilities';
@@ -32,7 +32,7 @@ export class GameplayPanel extends Component {
     }
 
     protected async onEnable() {
-        this.timeTxt.node.getComponent(Animation).stop();
+        this.resetTime();
         this._currentTime = 60;
         this._isReady = false;
         this.countDownTimer.node.active = true;
@@ -47,7 +47,7 @@ export class GameplayPanel extends Component {
         await delay(1);
         this._whenTimerCompleted();
         
-        await delay(this._currentTime - 4);
+        await delay(56);
         this.timeTxt.node.getComponent(Animation).play();
         GameManager.Instance.audioManager.playSfx(ENUM_AUDIO_CLIP.SFX_TIMEUP);
 
@@ -72,6 +72,12 @@ export class GameplayPanel extends Component {
         this.scoreTxt.string = GameManager.Instance.score.toString();
     }
 
+    private resetTime(){
+        this.floatScoreAnimation.node.active = false;
+        this.timeTxt.node.getComponent(Animation).stop();
+        this.timeTxt.color = Color.WHITE;
+    }
+
 
     protected update(deltaTime: number) 
     {
@@ -80,11 +86,11 @@ export class GameplayPanel extends Component {
             this.timeTxt.string = FormatTime(this._currentTime);
 
             if (this._currentTime <= 0) {
+                this.resetTime();
                 this.timeTxt.string = FormatTime(0);
                 GameManager.Instance.ChangeState(GameState.EndGame);
             }
         }
-
     }
 }
 

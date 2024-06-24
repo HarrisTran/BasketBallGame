@@ -21,7 +21,11 @@ export class ItemRow extends Component {
     @property({ group: { name: "Medal Texture", id: "2" }, type: SpriteFrame })
 	public bronzeMedal: SpriteFrame = null;
 
-    public createItemRow(rank: number, score: number){
+    @property({ group: { name: "Item Frame", id: "3" }, type: SpriteFrame })
+    public yellowFrame: SpriteFrame = null;
+
+
+    public createItemRow(rank: number, score: number, selfframe?: boolean){
         let spriteFrame : SpriteFrame = null;
         switch (rank) {
             case 1:
@@ -38,6 +42,10 @@ export class ItemRow extends Component {
                 break;
         }
         this.medalSprite.spriteFrame = spriteFrame;
+
+        if(selfframe){
+            this.node.getComponent(Sprite).spriteFrame = this.yellowFrame;
+        }
 
         this.scoreLabel.string = score.toString();
 

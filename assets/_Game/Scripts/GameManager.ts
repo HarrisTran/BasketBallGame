@@ -1,4 +1,4 @@
-import { _decorator, Animation, Component, Enum, EventTarget, Game, game, instantiate, math, Node, ParticleSystem, PhysicsSystem2D, randomRangeInt, Sprite, UI, UITransform, Vec2, Vec3 } from 'cc';
+import { _decorator, Component, Enum, EventTarget, Game, game,Animation, instantiate, math, Node, ParticleSystem, PhysicsSystem2D, randomRangeInt, Sprite, UI, UITransform, Vec2, Vec3 } from 'cc';
 import { UiController } from './UiController';
 import PoolManager from './PoolManager';
 import ResourceManager from './ResourceManager';
@@ -40,6 +40,9 @@ export class GameManager extends Component {
     @property(ParticleSystem) ballPassParticle: ParticleSystem = null;
     @property(ParticleSystem) ballHitParticle: ParticleSystem = null;
 
+    @property(Animation) net1: Animation = null;
+    @property(Animation) net2: Animation = null;
+
     private _score: number = 0;
     public replayed: boolean = false;
 
@@ -50,6 +53,7 @@ export class GameManager extends Component {
 
     ////////////////////////////////////////////
     private _ballSpawnPosition: Vec3;
+    private _freeTrialTutorialTimes = 3;
 
     protected onLoad(): void {
         GameManager._instance = this;
@@ -136,7 +140,7 @@ export class GameManager extends Component {
         this.basketSpaceTrigger(false);
         this.groundSpaceTrigger(false);
 
-        let randomPositionIndex = math.randomRangeInt(0,this.SpawnBallPositions.length);
+        let randomPositionIndex = this._freeTrialTutorialTimes-- >= 0 ? 5 : math.randomRangeInt(0,this.SpawnBallPositions.length);
         let getRandomPosition : Vec3 = this.SpawnBallPositions[randomPositionIndex].getWorldPosition();
         this._ballSpawnPosition = getRandomPosition.clone();
 
@@ -152,6 +156,9 @@ export class GameManager extends Component {
             playParticleRecursively(this.ballPassParticle);
 
             this.audioManager.playSfx(ENUM_AUDIO_CLIP.SFX_SCORE);
+
+            this.net1.play();
+            this.net2.play();
         }
     }
 

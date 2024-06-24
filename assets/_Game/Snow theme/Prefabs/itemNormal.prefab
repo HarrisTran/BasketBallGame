@@ -847,6 +847,10 @@
       "__uuid__": "649abf3b-665a-43f2-a64f-85876270ddad@f9941",
       "__expectedType__": "cc.SpriteFrame"
     },
+    "yellowFrame": {
+      "__uuid__": "0bbf6eba-2840-41a3-860c-d92c29bf2a27@f9941",
+      "__expectedType__": "cc.SpriteFrame"
+    },
     "_id": ""
   },
   {
@@ -862,6 +866,7 @@
       "__id__": 0
     },
     "fileId": "32U8jvSfpCO4ctXJn/jbvi",
+    "instance": null,
     "targetOverrides": []
   }
 ]

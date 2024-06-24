@@ -2,7 +2,7 @@
   "ver": "1.0.26",
   "importer": "image",
   "imported": true,
-  "uuid": "c6db39c8-e7e2-41cc-9db2-b56b3d8a05cf",
+  "uuid": "18243775-b890-491d-95b6-b16086216fcb",
   "files": [
     ".json",
     ".png"
@@ -10,14 +10,14 @@
   "subMetas": {
     "6c48a": {
       "importer": "texture",
-      "uuid": "c6db39c8-e7e2-41cc-9db2-b56b3d8a05cf@6c48a",
-      "displayName": "Level1",
+      "uuid": "18243775-b890-491d-95b6-b16086216fcb@6c48a",
+      "displayName": "Medal_Gold",
       "id": "6c48a",
       "name": "texture",
       "userData": {
         "wrapModeS": "clamp-to-edge",
         "wrapModeT": "clamp-to-edge",
-        "imageUuidOrDatabaseUri": "c6db39c8-e7e2-41cc-9db2-b56b3d8a05cf",
+        "imageUuidOrDatabaseUri": "18243775-b890-491d-95b6-b16086216fcb",
         "isUuid": true,
         "visible": false,
         "minfilter": "linear",
@@ -34,8 +34,8 @@
     },
     "f9941": {
       "importer": "sprite-frame",
-      "uuid": "c6db39c8-e7e2-41cc-9db2-b56b3d8a05cf@f9941",
-      "displayName": "Level1",
+      "uuid": "18243775-b890-491d-95b6-b16086216fcb@f9941",
+      "displayName": "Medal_Gold",
       "id": "f9941",
       "name": "spriteFrame",
       "userData": {
@@ -114,7 +114,7 @@
           ]
         },
         "isUuid": true,
-        "imageUuidOrDatabaseUri": "c6db39c8-e7e2-41cc-9db2-b56b3d8a05cf@6c48a",
+        "imageUuidOrDatabaseUri": "18243775-b890-491d-95b6-b16086216fcb@6c48a",
         "atlasUuid": ""
       },
       "ver": "1.0.12",
@@ -129,6 +129,6 @@
     "type": "sprite-frame",
     "hasAlpha": true,
     "fixAlphaTransparencyArtifacts": false,
-    "redirect": "c6db39c8-e7e2-41cc-9db2-b56b3d8a05cf@f9941"
+    "redirect": "18243775-b890-491d-95b6-b16086216fcb@f9941"
   }
 }

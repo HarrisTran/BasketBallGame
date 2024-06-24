@@ -43,7 +43,7 @@
     "_lpos": {
       "__type__": "cc.Vec3",
       "x": -1.4205000000000005,
-      "y": -34,
+      "y": -20,
       "z": 0
     },
     "_lrot": {
@@ -227,7 +227,7 @@
       "a": 255
     },
     "_spriteFrame": {
-      "__uuid__": "c6db39c8-e7e2-41cc-9db2-b56b3d8a05cf@f9941",
+      "__uuid__": "18243775-b890-491d-95b6-b16086216fcb@f9941",
       "__expectedType__": "cc.SpriteFrame"
     },
     "_type": 0,
@@ -388,7 +388,7 @@
     "_isUnderline": false,
     "_underlineHeight": 2,
     "_cacheMode": 0,
-    "_enableOutline": false,
+    "_enableOutline": true,
     "_outlineColor": {
       "__type__": "cc.Color",
       "r": 0,
@@ -857,15 +857,19 @@
       "__id__": 27
     },
     "goldMedal": {
-      "__uuid__": "c6db39c8-e7e2-41cc-9db2-b56b3d8a05cf@f9941",
+      "__uuid__": "18243775-b890-491d-95b6-b16086216fcb@f9941",
       "__expectedType__": "cc.SpriteFrame"
     },
     "silverMedal": {
-      "__uuid__": "6f1ab5b6-1266-44cb-8bc8-73eaa2e6b320@f9941",
+      "__uuid__": "559e22f0-1459-4e67-bb92-da09b4555792@f9941",
       "__expectedType__": "cc.SpriteFrame"
     },
     "bronzeMedal": {
-      "__uuid__": "e6f517ef-a863-4ceb-a05d-7de121918f6e@f9941",
+      "__uuid__": "e92f5c10-594e-46e0-804f-fa27145302f6@f9941",
+      "__expectedType__": "cc.SpriteFrame"
+    },
+    "yellowFrame": {
+      "__uuid__": "c2e334a3-0117-4813-a25b-9dabf4e247c0@f9941",
       "__expectedType__": "cc.SpriteFrame"
     },
     "_id": ""

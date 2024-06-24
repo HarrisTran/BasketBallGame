@@ -28,13 +28,15 @@ export class GameOverPanel extends Component {
 
     private _clickedContinueButton : boolean = false;
 
+    private _numberItemRowCanShow: number = 6;
+
     protected onLoad(): void {
         this.overlay.on('click',this.exitGame);
     }
 
     private exitGame(){
         //GameManager.Instance.APIManager.postScoreWebEvent();
-        GameManager.Instance.APIManager.postScoreToServer();
+        GameManager.Instance.APIManager.postScoreWebEvent();
     }
 
     protected onEnable(): void {
@@ -46,18 +48,39 @@ export class GameOverPanel extends Component {
         
     }
 
-    private _updateLeaderBoard(){
+    private async _updateLeaderBoard(){
         let index : number = 1;
         this.leaderBoardView.content.removeAllChildren();
-        for(let info of GameManager.Instance.APIManager.allScoreInfo.slice(0,5)){
+
+        let participants = await GameManager.Instance.APIManager.postScoreToServer()
+
+        
+        let listTop = participants.slice(0,this._numberItemRowCanShow+1);
+        let currentScore = GameManager.Instance.APIManager.getStagingScore();
+        
+        for(let info of listTop){
+            console.log(info);
+            
             let row = instantiate(this.itemRowPrefab);
             row.setParent(this.leaderBoardView.content);
-            row.getComponent(ItemRow).createItemRow(index,info.totalScore);
+            row.getComponent(ItemRow).createItemRow(index,info.sum);
+            if(info.sum == currentScore){
+                row.getComponent(ItemRow).createItemRow(index,info.sum,true);
+            }
             row.active = true;
             index++;
         }
-        let test : ParticipantInfo = {id: "Khoa", totalScore: GameManager.Instance.score} ;
-        this.mainItemRow.createItemRow(1,test.totalScore);
+
+        let ranking = listTop.findIndex(i=>i.sum == currentScore) + 1;
+        if(ranking <= 0) return;
+
+        if(ranking > this._numberItemRowCanShow){
+            this.mainItemRow.node.active = true;
+            this.mainItemRow.createItemRow(ranking,currentScore);
+        }
+        else{
+            this.mainItemRow.node.active = false;
+        }
     }
 
     private onClickContinue(){
